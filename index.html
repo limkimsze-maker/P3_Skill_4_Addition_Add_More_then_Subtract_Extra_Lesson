@@ -472,11 +472,6 @@
           <div class="badges">
             <div class="pill"><span class="dot" id="statusDot"></span><span id="statusText">Not checked</span></div>
             <div class="pill"><span style="font-weight:950">Score</span> <span id="scorePill">0</span></div>
-
-            <!-- ✅ Back to Main Menu (only addition) -->
-            <button class="ghost" id="btnHome" type="button" style="border-radius:999px;padding:7px 12px;font-size:12px;">
-              ⬅ Back to Main Menu
-            </button>
           </div>
         </div>
 
@@ -725,6 +720,12 @@
       </div>
     </div>
   </div>
+
+  <!-- ✅ Back to Main Menu (bottom centre) -->
+  <button class="ghost" id="btnHome" type="button"
+    style="position:fixed;left:50%;bottom:14px;transform:translateX(-50%);z-index:10000;border-radius:999px;padding:10px 14px;font-size:12px;">
+    ⬅ Back to Main Menu
+  </button>
 
   <!-- Sound kit (generic) -->
   <script>
@@ -1054,7 +1055,7 @@
       $("btnShowAll").addEventListener("click", showAllAnswers);
       $("btnNew").addEventListener("click", newQuestion);
 
-      // ✅ Back to Main Menu
+      // ✅ Back to Main Menu (bottom centre)
       $("btnHome").addEventListener("click", ()=>{
         window.location.href = "https://limkimsze-maker.github.io/P3_Mental_Sum_Challenge/";
       });
