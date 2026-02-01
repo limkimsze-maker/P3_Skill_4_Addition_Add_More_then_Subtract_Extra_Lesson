@@ -1,0 +1,1063 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <!-- /standard (Kim Sze) -->
+  <link rel="icon" href="./kimsze_sharp16.ico?v=20260111a" sizes="any">
+  <link rel="shortcut icon" href="./kimsze_sharp16.ico?v=20260111a">
+
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+  <title>Method 3 — Add more, then subtract the extra (95–99) — Step-by-step Practice</title>
+
+  <!-- ✅ Always-Clear on Load (Default Build Contract) -->
+  <script>
+  (function(){
+    const ACTIVITY_ID = "https://limkimsze-maker.github.io/AddMore_SubtractExtra_Method3/";
+    try{
+      const toDelete = [];
+      for(let i=0;i<localStorage.length;i++){
+        const k = localStorage.key(i);
+        if(!k) continue;
+        if(k === ACTIVITY_ID) toDelete.push(k);
+        if(k.startsWith(ACTIVITY_ID+"::")) toDelete.push(k);
+        if(k.startsWith("sls_scope::"+ACTIVITY_ID)) toDelete.push(k);
+        if(k.startsWith("UFCO-firstSubmit::"+ACTIVITY_ID)) toDelete.push(k);
+        if(k.startsWith("sls_unlike_payload::"+ACTIVITY_ID)) toDelete.push(k);
+        if(k.startsWith("sls_unlike_payload::"+ACTIVITY_ID+"::")) toDelete.push(k);
+        if(k.startsWith("UFCO-")) toDelete.push(k);
+      }
+      toDelete.forEach(k=>{ try{ localStorage.removeItem(k); }catch(e){} });
+
+      try{
+        sessionStorage.removeItem("UFCO-audio-unlocked");
+        sessionStorage.removeItem("UFCO-complete");
+      }catch(e){}
+
+      try{
+        const bc = new BroadcastChannel("xapi-state");
+        bc.postMessage({type:"clear", activityId: ACTIVITY_ID, ts: Date.now()});
+        bc.close();
+      }catch(e){}
+    }catch(e){}
+  })();
+  </script>
+
+  <style>
+    :root{
+      --bgA:#f6fbff; --bgB:#fff7ed;
+      --card:rgba(255,255,255,.92);
+      --ink:#0f172a; --muted:#64748b;
+      --line:#e2e8f0;
+      --good:#16a34a; --bad:#dc2626; --warn:#f59e0b;
+      --accent:#0ea5e9; --accent2:#a855f7;
+      --orange:#f59e0b; --blue:#0ea5e9;
+      --shadow:0 18px 44px rgba(2,6,23,.12);
+      --radius:18px;
+      --font: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+    *{box-sizing:border-box}
+
+    html, body{
+      width:100%; height:100%; margin:0;
+      overflow:hidden;
+      position:fixed;
+      overscroll-behavior:none;
+      touch-action:manipulation;
+      font-family:var(--font);
+      color:var(--ink);
+      background:
+        radial-gradient(1200px 700px at 15% 5%, rgba(14,165,233,.18), transparent 60%),
+        radial-gradient(1200px 700px at 85% 10%, rgba(168,85,247,.14), transparent 60%),
+        radial-gradient(900px 500px at 50% 90%, rgba(245,158,11,.10), transparent 62%),
+        linear-gradient(180deg, var(--bgA), var(--bgB));
+    }
+    body:before{
+      content:"";
+      position:fixed; inset:0;
+      background: repeating-linear-gradient(45deg,
+        rgba(15,23,42,.03) 0 8px,
+        rgba(15,23,42,0) 8px 16px);
+      pointer-events:none;
+      mix-blend-mode:multiply;
+      opacity:.28;
+    }
+
+    .viewport{
+      position:fixed; inset:0;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      overflow:hidden;
+    }
+    .stageWrap{
+      position:relative;
+      width: 920px;
+      height: 560px;
+      overflow:hidden;
+    }
+    .stage{
+      width: 920px;
+      height: 560px;
+      transform-origin: top left;
+      will-change: transform;
+      position:absolute; inset:0;
+      overflow:hidden;
+    }
+
+    .topbar{
+      display:flex;
+      align-items:flex-end;
+      justify-content:space-between;
+      gap:10px;
+      padding: 2px 8px 6px 8px;
+      height: 42px;
+    }
+    .title{ font-weight:950; letter-spacing:.2px; line-height:1.05; font-size:17px; }
+    .subtitle{ margin-top:2px; color:var(--muted); font-size:10px; line-height:1.15; }
+    .badges{ display:flex; gap:8px; align-items:center; justify-content:flex-end; flex-wrap:nowrap; }
+    .pill{
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.86);
+      box-shadow:0 10px 22px rgba(2,6,23,.08);
+      border-radius:999px;
+      padding:6px 10px;
+      font-size:12px;
+      display:flex; gap:7px; align-items:center;
+      user-select:none;
+      backdrop-filter: blur(8px);
+      white-space:nowrap;
+    }
+    .dot{ width:10px; height:10px; border-radius:50%; background:var(--warn); box-shadow:0 0 0 4px rgba(245,158,11,.18); }
+    .dot.ok{ background:var(--good); box-shadow:0 0 0 4px rgba(22,163,74,.18); }
+
+    .panel{
+      margin: 0 8px 6px 8px;
+      height: calc(100% - 48px);
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:10px;
+      overflow:hidden;
+      position:relative;
+      backdrop-filter: blur(10px);
+    }
+    .panel:before{
+      content:"";
+      position:absolute;
+      width:200px; height:200px;
+      right:-80px; top:-80px;
+      border-radius:56px;
+      background: radial-gradient(circle at 30% 30%, rgba(14,165,233,.32), rgba(168,85,247,.16), transparent 70%);
+      transform: rotate(18deg);
+      pointer-events:none;
+    }
+
+    .layout{
+      height:100%;
+      display:grid;
+      grid-template-columns: 1fr 170px;
+      gap:10px;
+      align-items:stretch;
+      position:relative;
+      z-index:1;
+      min-height:0;
+      overflow:hidden;
+    }
+
+    .mainCard{
+      height:100%;
+      background: rgba(255,255,255,.94);
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:8px;
+      overflow:hidden;
+      display:grid;
+      grid-template-rows: auto 1fr;
+      gap:8px;
+      min-height:0;
+    }
+    .qHeader{
+      display:flex;
+      align-items:flex-end;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .eqBig{
+      display:flex; align-items:baseline; gap:8px;
+      flex-wrap:nowrap; white-space:nowrap;
+      font-weight:950; letter-spacing:.2px;
+      font-size:22px;
+    }
+    .eqBig .op{ color:var(--muted); font-weight:900; }
+    .hint{
+      color:var(--muted);
+      font-size:10px;
+      line-height:1.15;
+      text-align:right;
+      max-width: 360px;
+    }
+
+    .mid{
+      min-height:0;
+      display:grid;
+      grid-template-columns: 1.25fr .75fr;
+      gap:10px;
+      overflow:hidden;
+    }
+
+    .leftBoard{
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:10px;
+      background:
+        radial-gradient(700px 240px at 25% 40%, rgba(14,165,233,.10), transparent 60%),
+        radial-gradient(700px 240px at 75% 40%, rgba(168,85,247,.10), transparent 60%),
+        rgba(255,255,255,.96);
+      overflow:hidden;
+      display:grid;
+      grid-template-rows: auto auto 1fr;
+      gap:10px;
+      min-height:0;
+    }
+
+    /* ✅ two bonds — corrected: TOP is 100, parts are (A) and (extra) */
+    .bondRow{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
+      align-items:stretch;
+      overflow:hidden;
+    }
+    .bondBox{
+      width:100%;
+      height:200px;
+      overflow:hidden;
+      border-radius:14px;
+      border:1px solid rgba(15,23,42,.06);
+      background: radial-gradient(520px 220px at 50% 30%, rgba(255,255,255,.95), rgba(255,255,255,.60));
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+
+    .workLines{
+      display:grid;
+      gap:6px;
+      font-weight:950;
+      font-size:18px;
+      line-height:1.15;
+      padding:2px 2px;
+    }
+    .workLines .dim{ color:var(--muted); font-weight:900; }
+    .workLines .eqRow{ display:flex; align-items:baseline; gap:8px; flex-wrap:wrap; }
+
+    .finalPill{
+      margin-top:auto;
+      border-radius:16px;
+      padding:12px 12px;
+      background: rgba(14,165,233,.08);
+      border:1px solid rgba(14,165,233,.18);
+      display:flex;
+      align-items:center;
+      justify-content:flex-start;
+      gap:10px;
+      font-weight:950;
+      font-size:22px;
+      letter-spacing:.2px;
+      overflow:hidden;
+    }
+
+    .stepsCol{
+      display:grid;
+      grid-template-rows: 1fr 1fr;
+      gap:10px;
+      overflow:hidden;
+      min-height:0;
+    }
+    .stepCard{
+      border-radius:16px;
+      background:rgba(255,255,255,.96);
+      border:2px solid var(--line);
+      padding:10px 10px;
+      overflow:hidden;
+      display:grid;
+      grid-template-rows: auto auto 1fr;
+      gap:6px;
+      min-height:0;
+    }
+    .stepCard.orange{ border-color: rgba(245,158,11,.75); }
+    .stepCard.blue{ border-color: rgba(14,165,233,.75); }
+
+    .stepTitle{
+      display:flex; gap:8px; align-items:baseline;
+      font-weight:950; letter-spacing:.2px;
+    }
+    .stepTitle .label{ font-size:18px; text-decoration: underline; }
+    .stepTitle.orange .label{ color: var(--orange); }
+    .stepTitle.blue .label{ color: var(--blue); }
+
+    .stepDesc{ font-weight:900; font-size:14px; color:var(--ink); }
+    .stepEq{
+      font-weight:950;
+      font-size:17px;
+      display:grid;
+      gap:6px;
+      align-content:start;
+    }
+    .stepEq .row{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+    .stepEq .dim{ color:var(--muted); font-weight:900; }
+
+    /* Inputs */
+    input.blank{
+      width:74px;
+      height:30px;
+      border-radius:12px;
+      border:2px solid var(--line);
+      padding:0 8px;
+      font-size:16px; /* no iOS zoom */
+      font-weight:950;
+      text-align:center;
+      outline:none;
+      background:#fff;
+      line-height:30px;
+    }
+    input.blank.tiny{ width:64px; }
+    input.blank.finalWide{ width:92px; height:34px; line-height:34px; }
+    input.blank.pillLike{
+      border-color: rgba(22,163,74,.55);
+      background: rgba(22,163,74,.08);
+      border-radius:999px;
+    }
+    input.blank:focus{
+      border-color: rgba(14,165,233,.75);
+      box-shadow:0 0 0 4px rgba(14,165,233,.16);
+    }
+    .okField{ border-color: rgba(22,163,74,.92)!important; box-shadow:0 0 0 4px rgba(22,163,74,.14)!important; }
+    .badField{ border-color: rgba(220,38,38,.92)!important; box-shadow:0 0 0 4px rgba(220,38,38,.12)!important; }
+
+    /* Rail */
+    button{
+      border:1px solid var(--line);
+      background:#fff;
+      border-radius:13px;
+      font-weight:950;
+      cursor:pointer;
+      box-shadow:0 10px 18px rgba(2,6,23,.08);
+      white-space:nowrap;
+      touch-action:manipulation;
+      user-select:none;
+    }
+    button.primary{
+      background:linear-gradient(180deg, rgba(14,165,233,.96), rgba(14,165,233,.82));
+      border-color: rgba(14,165,233,.6);
+      color:#fff;
+    }
+    button.good{
+      background:linear-gradient(180deg, rgba(22,163,74,.96), rgba(22,163,74,.82));
+      border-color: rgba(22,163,74,.6);
+      color:#fff;
+    }
+    button.ghost{ background:rgba(255,255,255,.78); }
+    button.warn{
+      background:linear-gradient(180deg, rgba(245,158,11,.96), rgba(245,158,11,.82));
+      border-color: rgba(245,158,11,.6);
+      color:#fff;
+    }
+
+    .rail{
+      height:100%;
+      background: rgba(255,255,255,.94);
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:9px;
+      overflow:hidden;
+      display:grid;
+      grid-template-rows: auto 1fr auto;
+      gap:8px;
+      min-height:0;
+    }
+    .railTitle{
+      font-weight:950;
+      font-size:12px;
+      color:var(--muted);
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:8px;
+    }
+    .railBtns{ display:grid; gap:8px; align-content:start; }
+    .railBtns button{
+      width:100%;
+      padding:10px 10px;
+      font-size:12px;
+      border-radius:14px;
+    }
+    .railFooter{ display:grid; gap:8px; }
+    .feedback{
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:8px 9px;
+      background: rgba(255,255,255,.88);
+      color:var(--muted);
+      font-size:10.8px;
+      line-height:1.25;
+      height:102px;
+      overflow:hidden;
+    }
+    .feedback strong{ color:var(--ink); }
+    .creditInline{
+      margin-top:4px;
+      font-size:11px;
+      color:var(--muted);
+      text-align:center;
+      user-select:none;
+    }
+
+    .confetti{
+      position:fixed; inset:0;
+      pointer-events:none;
+      overflow:hidden;
+      z-index: 9999;
+    }
+    .confetti i{
+      position:absolute; top:-12px;
+      width:10px; height:14px;
+      border-radius:3px;
+      opacity:.95;
+      animation: fall 1100ms linear forwards;
+    }
+
+    /* ✅ Step 2: keep (extra + extra = sum) on ONE LINE */
+    .s2Inline{
+      flex-wrap:nowrap !important;
+      white-space:nowrap;
+      align-items:center;
+      justify-content:flex-start;
+      gap:10px;
+    }
+    .s2Inline .blank.tiny{
+      width:62px;
+      height:34px;
+      line-height:34px;
+    }
+
+    @keyframes fall{
+      to{ transform: translateY(110vh) rotate(260deg); opacity:1; }
+    }
+
+    /* Mobile */
+    #panel.smallMode .layout{ grid-template-columns: 1fr; }
+    #panel.smallMode .hint{ display:none; }
+    #panel.smallMode .mid{ grid-template-columns: 1fr; }
+    #panel.smallMode .stepsCol{ grid-template-rows: auto auto; }
+    #panel.smallMode .rail{ grid-template-rows: auto auto; height:auto; }
+    #panel.smallMode .railBtns{ grid-template-columns: repeat(3, 1fr); gap:8px; }
+    #panel.smallMode .railFooter{ grid-template-columns: 1fr 1fr; align-items:stretch; }
+    #panel.smallMode .bondBox{ height:185px; }
+
+    #xapiBase{ display:none!important; }
+  </style>
+</head>
+
+<body>
+  <div class="viewport">
+    <div class="stageWrap" id="stageWrap">
+      <div class="stage" id="stage">
+        <div class="topbar">
+          <div>
+            <div class="title">Addition Technique 4: Add more, then Subtract the Extra)</div>
+            <div class="subtitle">Best when both numbers are near 100 (95–99).</div>
+          </div>
+          <div class="badges">
+            <div class="pill"><span class="dot" id="statusDot"></span><span id="statusText">Not checked</span></div>
+            <div class="pill"><span style="font-weight:950">Score</span> <span id="scorePill">0</span></div>
+          </div>
+        </div>
+
+        <div class="panel" id="panel">
+          <div class="layout">
+
+            <!-- MAIN -->
+            <div class="mainCard">
+              <div class="qHeader">
+                <div class="eqBig" aria-label="question equation">
+                  <span id="A">98</span>
+                  <span class="op">+</span>
+                  <span id="B">96</span>
+                </div>
+                <div class="hint" id="hintText">Tip: Think “100 − extra”. Then do 200 − (extraA + extraB).</div>
+              </div>
+
+              <div class="mid">
+                <!-- LEFT -->
+                <div class="leftBoard">
+                  <!-- ✅ corrected bonds -->
+                  <div class="bondRow">
+                    <div class="bondBox" aria-label="number bond for A">
+                      <svg viewBox="0 0 360 200" width="100%" height="200" role="img" aria-label="Number bond A">
+                        <defs>
+                          <linearGradient id="gLineA" x1="0" x2="1">
+                            <stop offset="0" stop-color="rgba(14,165,233,0.95)"/>
+                            <stop offset="1" stop-color="rgba(168,85,247,0.92)"/>
+                          </linearGradient>
+                          <radialGradient id="gNodeA" cx="30%" cy="30%">
+                            <stop offset="0" stop-color="#ffffff"/>
+                            <stop offset="1" stop-color="rgba(240,253,250,0.94)"/>
+                          </radialGradient>
+                          <filter id="shadowA" x="-30%" y="-30%" width="160%" height="160%">
+                            <feDropShadow dx="0" dy="7" stdDeviation="9" flood-color="rgba(2,6,23,0.16)"/>
+                          </filter>
+                        </defs>
+
+                        <path d="M180 50 C140 78, 115 112, 106 146" fill="none" stroke="url(#gLineA)" stroke-width="9" stroke-linecap="round" opacity="0.9"/>
+                        <path d="M180 50 C220 78, 245 112, 254 146" fill="none" stroke="url(#gLineA)" stroke-width="9" stroke-linecap="round" opacity="0.9"/>
+
+                        <!-- TOP is 100 -->
+                        <g filter="url(#shadowA)">
+                          <circle cx="180" cy="50" r="36" fill="url(#gNodeA)" stroke="rgba(14,165,233,0.55)" stroke-width="7"/>
+                          <text x="180" y="58" text-anchor="middle" font-size="22" font-weight="950" fill="#0f172a">100</text>
+                        </g>
+
+                        <!-- LEFT part is A -->
+                        <g filter="url(#shadowA)">
+                          <circle cx="106" cy="146" r="40" fill="url(#gNodeA)" stroke="rgba(22,163,74,0.55)" stroke-width="7"/>
+                          <text x="106" y="120" text-anchor="middle" font-size="11" font-weight="900" fill="#64748b">number</text>
+                          <text x="106" y="170" text-anchor="middle" font-size="20" font-weight="950" fill="#0f172a" id="A_part">98</text>
+                        </g>
+
+                        <!-- RIGHT part is extra (blank) -->
+                        <g filter="url(#shadowA)">
+                          <circle cx="254" cy="146" r="40" fill="url(#gNodeA)" stroke="rgba(22,163,74,0.55)" stroke-width="7"/>
+                          <text x="254" y="120" text-anchor="middle" font-size="11" font-weight="900" fill="#64748b">extra</text>
+                          <foreignObject x="211" y="132" width="86" height="52">
+                            <div xmlns="http://www.w3.org/1999/xhtml" style="display:flex;justify-content:center;">
+                              <input class="blank tiny" id="extraA" inputmode="numeric" autocomplete="off" aria-label="extra for A"/>
+                            </div>
+                          </foreignObject>
+                        </g>
+                      </svg>
+                    </div>
+
+                    <div class="bondBox" aria-label="number bond for B">
+                      <svg viewBox="0 0 360 200" width="100%" height="200" role="img" aria-label="Number bond B">
+                        <defs>
+                          <linearGradient id="gLineB" x1="0" x2="1">
+                            <stop offset="0" stop-color="rgba(14,165,233,0.95)"/>
+                            <stop offset="1" stop-color="rgba(168,85,247,0.92)"/>
+                          </linearGradient>
+                          <radialGradient id="gNodeB" cx="30%" cy="30%">
+                            <stop offset="0" stop-color="#ffffff"/>
+                            <stop offset="1" stop-color="rgba(240,253,250,0.94)"/>
+                          </radialGradient>
+                          <filter id="shadowB" x="-30%" y="-30%" width="160%" height="160%">
+                            <feDropShadow dx="0" dy="7" stdDeviation="9" flood-color="rgba(2,6,23,0.16)"/>
+                          </filter>
+                        </defs>
+
+                        <path d="M180 50 C140 78, 115 112, 106 146" fill="none" stroke="url(#gLineB)" stroke-width="9" stroke-linecap="round" opacity="0.9"/>
+                        <path d="M180 50 C220 78, 245 112, 254 146" fill="none" stroke="url(#gLineB)" stroke-width="9" stroke-linecap="round" opacity="0.9"/>
+
+                        <!-- TOP is 100 -->
+                        <g filter="url(#shadowB)">
+                          <circle cx="180" cy="50" r="36" fill="url(#gNodeB)" stroke="rgba(14,165,233,0.55)" stroke-width="7"/>
+                          <text x="180" y="58" text-anchor="middle" font-size="22" font-weight="950" fill="#0f172a">100</text>
+                        </g>
+
+                        <!-- LEFT part is B -->
+                        <g filter="url(#shadowB)">
+                          <circle cx="106" cy="146" r="40" fill="url(#gNodeB)" stroke="rgba(22,163,74,0.55)" stroke-width="7"/>
+                          <text x="106" y="120" text-anchor="middle" font-size="11" font-weight="900" fill="#64748b">number</text>
+                          <text x="106" y="170" text-anchor="middle" font-size="20" font-weight="950" fill="#0f172a" id="B_part">96</text>
+                        </g>
+
+                        <!-- RIGHT part is extra (blank) -->
+                        <g filter="url(#shadowB)">
+                          <circle cx="254" cy="146" r="40" fill="url(#gNodeB)" stroke="rgba(22,163,74,0.55)" stroke-width="7"/>
+                          <text x="254" y="120" text-anchor="middle" font-size="11" font-weight="900" fill="#64748b">extra</text>
+                          <foreignObject x="211" y="132" width="86" height="52">
+                            <div xmlns="http://www.w3.org/1999/xhtml" style="display:flex;justify-content:center;">
+                              <input class="blank tiny" id="extraB" inputmode="numeric" autocomplete="off" aria-label="extra for B"/>
+                            </div>
+                          </foreignObject>
+                        </g>
+                      </svg>
+                    </div>
+                  </div>
+
+                  <!-- working -->
+                  <div class="workLines" aria-label="working">
+                    <div class="eqRow">
+                      <span class="dim">=</span>
+                      <span class="dim">(100 −</span>
+                      <input class="blank tiny" id="w_extraA" inputmode="numeric" autocomplete="off" aria-label="extra A in working"/>
+                      <span class="dim">)</span>
+                      <span class="dim">+</span>
+                      <span class="dim">(100 −</span>
+                      <input class="blank tiny" id="w_extraB" inputmode="numeric" autocomplete="off" aria-label="extra B in working"/>
+                      <span class="dim">)</span>
+                    </div>
+
+                    <div class="eqRow">
+                      <span class="dim">=</span>
+                      <span class="dim">200 −</span>
+                      <input class="blank tiny" id="w_sumExtra" inputmode="numeric" autocomplete="off" aria-label="sum of extras"/>
+                    </div>
+
+                    <!-- ✅ FINAL (was 194) now blank for user -->
+                    <div class="eqRow">
+                      <span class="dim">=</span>
+                      <input class="blank finalWide pillLike" id="w_final" inputmode="numeric" autocomplete="off" aria-label="final answer in working"/>
+                    </div>
+                  </div>
+
+                  <!-- ✅ FINAL (was 194) now blank for user -->
+                  <div class="finalPill" aria-label="final equation">
+                    <span id="Afinal">98</span>
+                    <span class="op">+</span>
+                    <span id="Bfinal">96</span>
+                    <span class="op">=</span>
+                    <input class="blank finalWide pillLike" id="finalAns" inputmode="numeric" autocomplete="off" aria-label="final answer"/>
+                  </div>
+                </div>
+
+                <!-- RIGHT step cards -->
+                <div class="stepsCol" aria-label="step cards">
+                  <div class="stepCard orange">
+                    <div class="stepTitle orange"><span class="label">STEP 1</span></div>
+                    <div class="stepDesc">Make 100.</div>
+                    <div class="stepEq">
+                      <div class="row">
+                        <span id="Astep1">98</span>
+                        <span class="dim">+</span>
+                        <input class="blank tiny" id="s1_addA" inputmode="numeric" autocomplete="off" aria-label="add to A to make 100"/>
+                        <span class="dim">=</span>
+                        <span style="padding:6px 12px;border:2px solid rgba(22,163,74,.55);border-radius:999px;background:rgba(22,163,74,.08);font-weight:950;">100</span>
+                      </div>
+                      <div class="row">
+                        <span id="Bstep1">96</span>
+                        <span class="dim">+</span>
+                        <input class="blank tiny" id="s1_addB" inputmode="numeric" autocomplete="off" aria-label="add to B to make 100"/>
+                        <span class="dim">=</span>
+                        <span style="padding:6px 12px;border:2px solid rgba(22,163,74,.55);border-radius:999px;background:rgba(22,163,74,.08);font-weight:950;">100</span>
+                      </div>
+                      <div class="row">
+                        <span class="dim">100</span>
+                        <span class="dim">+</span>
+                        <span class="dim">100</span>
+                        <span class="dim">=</span>
+                        <span style="padding:6px 12px;border:2px solid rgba(22,163,74,.55);border-radius:999px;background:rgba(22,163,74,.08);font-weight:950;">200</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="stepCard blue">
+                    <div class="stepTitle blue"><span class="label">STEP 2</span></div>
+                    <div class="stepDesc">Subtract the extra.</div>
+                    <div class="stepEq">
+                      <!-- ✅ extras + extras = sum on ONE LINE -->
+                      <div class="row s2Inline">
+                        <input class="blank tiny" id="s2_add1" inputmode="numeric" autocomplete="off" aria-label="extra addend 1"/>
+                        <span class="dim">+</span>
+                        <input class="blank tiny" id="s2_add2" inputmode="numeric" autocomplete="off" aria-label="extra addend 2"/>
+                        <span class="dim">=</span>
+                        <input class="blank tiny" id="s2_sum" inputmode="numeric" autocomplete="off" aria-label="sum of extras"/>
+                      </div>
+
+                      <div class="row">
+                        <span class="dim">200</span>
+                        <span class="dim">−</span>
+                        <input class="blank tiny" id="s2_minus" inputmode="numeric" autocomplete="off" aria-label="subtract amount"/>
+                        <span class="dim">=</span>
+
+                        <!-- ✅ FINAL (was 194) now blank for user -->
+                        <input class="blank tiny pillLike" id="s2_final" inputmode="numeric" autocomplete="off" aria-label="final answer (step 2)"/>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- BUTTON RAIL -->
+            <div class="rail" aria-label="controls">
+              <div class="railTitle">
+                <span>Controls</span>
+                <span style="color:var(--muted); font-size:11px;">Step-by-step</span>
+              </div>
+
+              <div class="railBtns">
+                <button class="primary" id="btnCheck" type="button">Check</button>
+                <button class="warn" id="btnNext" type="button">Next ▶</button>
+                <button class="ghost" id="btnClear" type="button">Clear</button>
+                <button class="ghost" id="btnShowAll" type="button">Show all</button>
+                <button class="good" id="btnNew" type="button">New</button>
+              </div>
+
+              <div class="railFooter">
+                <div class="feedback" id="fb">
+                  <strong>Goal:</strong> Fill the blue boxes. Extras are the numbers you add to reach 100.
+                </div>
+                <div class="creditInline">Designed by Lim Kim Sze © 2026</div>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="confetti" id="confetti"></div>
+        </div>
+
+        <!-- Hidden xAPI base -->
+        <div id="xapiBase">
+          <script src="xapiwrapper.min.js"></script>
+          <script src="index.js"></script>
+          <div><label>score</label><input id="score-input" value="0"></div>
+          <div><label>feedback</label><input id="feedback-input" value="Well done!"></div>
+          <button id="sendBtn" type="button">Send/Save</button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Sound kit (generic) -->
+  <script>
+    let audioCtx = null;
+    function ensureAudio(){
+      if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      return audioCtx;
+    }
+    function beep(freq=660, ms=120, type="sine", gainVal=0.06){
+      const ctx = ensureAudio();
+      const o = ctx.createOscillator();
+      const g = ctx.createGain();
+      o.type = type; o.frequency.value = freq; g.gain.value = gainVal;
+      o.connect(g); g.connect(ctx.destination);
+      o.start();
+      setTimeout(()=>{ try{o.stop();}catch(e){} }, ms);
+    }
+    function sfxCorrect(){ try{ beep(740,110,"triangle",0.07); setTimeout(()=>beep(990,130,"triangle",0.06),120);}catch(e){} }
+    function sfxWrong(){ try{ beep(220,180,"sawtooth",0.05);}catch(e){} }
+    function sfxClock(){ try{ beep(520,70,"square",0.03);}catch(e){} }
+  </script>
+
+  <script>
+    const ACTIVITY_ID = "https://limkimsze-maker.github.io/AddMore_SubtractExtra_Method3/";
+    const $ = (id)=>document.getElementById(id);
+
+    const state = { A:98, B:96, extraA:2, extraB:4, sumExtra:6, final:194 };
+
+    // ✅ All blue boxes (including the final answers) are inputs now
+    const fieldIds = [
+      "extraA","extraB",
+      "w_extraA","w_extraB","w_sumExtra","w_final",
+      "s1_addA","s1_addB",
+      "s2_add1","s2_add2","s2_sum",
+      "s2_minus","s2_final",
+      "finalAns"
+    ];
+
+    const revealPlan = [
+      { id:"extraA",    val:()=>state.extraA,   msg:()=>`Extra for ${state.A} is ${state.extraA}.` },
+      { id:"extraB",    val:()=>state.extraB,   msg:()=>`Extra for ${state.B} is ${state.extraB}.` },
+      { id:"s1_addA",   val:()=>state.extraA,   msg:()=>`${state.A} + ${state.extraA} = 100.` },
+      { id:"s1_addB",   val:()=>state.extraB,   msg:()=>`${state.B} + ${state.extraB} = 100.` },
+      { id:"w_extraA",  val:()=>state.extraA,   msg:()=>`Write (100 − ${state.extraA}).` },
+      { id:"w_extraB",  val:()=>state.extraB,   msg:()=>`Write (100 − ${state.extraB}).` },
+      { id:"s2_add1",   val:()=>state.extraA,   msg:()=>`Add the extras.` },
+      { id:"s2_add2",   val:()=>state.extraB,   msg:()=>`Now find the sum.` },
+      { id:"s2_sum",    val:()=>state.sumExtra, msg:()=>`${state.extraA} + ${state.extraB} = ${state.sumExtra}.` },
+      { id:"w_sumExtra",val:()=>state.sumExtra, msg:()=>`So 200 − ${state.sumExtra} ...` },
+      { id:"s2_minus",  val:()=>state.sumExtra, msg:()=>`Subtract ${state.sumExtra} from 200.` },
+      { id:"s2_final",  val:()=>state.final,    msg:()=>`Final answer is ${state.final}.` },
+      { id:"w_final",   val:()=>state.final,    msg:()=>`Working gives ${state.final}.` },
+      { id:"finalAns",  val:()=>state.final,    msg:()=>`So ${state.A} + ${state.B} = ${state.final}.` },
+    ];
+    let nextIndex = 0;
+
+    function lockScroll(){
+      try{
+        document.addEventListener("wheel", (e)=>{ e.preventDefault(); }, {passive:false});
+        document.addEventListener("touchmove", (e)=>{
+          const t = e.target;
+          if(t && (t.tagName==="INPUT" || t.tagName==="BUTTON")) return;
+          e.preventDefault();
+        }, {passive:false});
+      }catch(e){}
+    }
+
+    function scaleStage(){
+      const stage = $("stage");
+      const wrap  = $("stageWrap");
+      const panel = $("panel");
+
+      const vv = window.visualViewport;
+      const vw = (vv ? vv.width : window.innerWidth);
+      const vh = (vv ? vv.height : window.innerHeight);
+
+      const designW = 920, designH = 560;
+      const margin = 10;
+
+      const scale = Math.min((vw - margin*2)/designW, (vh - margin*2)/designH);
+      const s = Math.max(0.24, scale);
+
+      wrap.style.width  = (designW * s) + "px";
+      wrap.style.height = (designH * s) + "px";
+      stage.style.transform = `scale(${s})`;
+
+      const small = (vw < 860) || (s < 0.78);
+      panel.classList.toggle("smallMode", small);
+    }
+    window.addEventListener("resize", scaleStage);
+    if(window.visualViewport){
+      window.visualViewport.addEventListener("resize", scaleStage);
+      window.visualViewport.addEventListener("scroll", scaleStage);
+    }
+
+    function clampInt(v){
+      if(v === "" || v == null) return null;
+      const n = parseInt(String(v).replace(/[^\d\-]/g,""),10);
+      return Number.isFinite(n) ? n : null;
+    }
+    function setStatus(ok, msg){
+      $("statusDot").classList.toggle("ok", !!ok);
+      $("statusText").textContent = msg;
+    }
+    function resetFieldStyles(){
+      fieldIds.forEach(id=> $(id).classList.remove("okField","badField"));
+    }
+    function mark(elId, ok){
+      const el = $(elId);
+      el.classList.add(ok ? "okField" : "badField");
+      return ok ? 1 : 0;
+    }
+    function setScore(score, feedback){
+      $("scorePill").textContent = String(score);
+      const scoreInput = $("score-input");
+      const fbInput = $("feedback-input");
+      if(scoreInput) scoreInput.value = String(score);
+      if(fbInput) fbInput.value = String(feedback || "Well done!");
+      try{
+        if(typeof storeState === "function"){
+          storeState({ score, feedback: String(feedback || "Well done!"), activityId: ACTIVITY_ID, ts: Date.now() });
+        }
+      }catch(e){}
+    }
+
+    function showConfetti(){
+      const host = $("confetti");
+      host.innerHTML = "";
+      for(let i=0;i<42;i++){
+        const el = document.createElement("i");
+        el.style.left = (Math.random()*100) + "%";
+        el.style.animationDuration = (900 + Math.random()*500) + "ms";
+        el.style.background = (Math.random() < .5) ? "rgba(14,165,233,.95)" : "rgba(168,85,247,.90)";
+        el.style.opacity = (0.75 + Math.random()*0.25).toFixed(2);
+        host.appendChild(el);
+      }
+      setTimeout(()=>{ host.innerHTML=""; }, 1350);
+    }
+
+    function updateTexts(){
+      $("A").textContent = state.A;
+      $("B").textContent = state.B;
+      $("A_part").textContent = state.A;
+      $("B_part").textContent = state.B;
+
+      $("Afinal").textContent = state.A;
+      $("Bfinal").textContent = state.B;
+
+      $("Astep1").textContent = state.A;
+      $("Bstep1").textContent = state.B;
+    }
+
+    function clearBlanks(){
+      fieldIds.forEach(id=> $(id).value = "");
+      resetFieldStyles();
+      setStatus(false, "Cleared");
+      $("fb").innerHTML = "<strong>Cleared.</strong> Fill in the blue boxes again.";
+      setScore(0, "Well done!");
+      nextIndex = 0;
+      if(sessionStorage.getItem("UFCO-audio-unlocked")==="1") sfxClock();
+    }
+
+    function showAllAnswers(){
+      $("extraA").value = state.extraA;
+      $("extraB").value = state.extraB;
+
+      $("w_extraA").value = state.extraA;
+      $("w_extraB").value = state.extraB;
+      $("w_sumExtra").value = state.sumExtra;
+      $("w_final").value = state.final;
+
+      $("s1_addA").value = state.extraA;
+      $("s1_addB").value = state.extraB;
+
+      $("s2_add1").value = state.extraA;
+      $("s2_add2").value = state.extraB;
+      $("s2_sum").value  = state.sumExtra;
+
+      $("s2_minus").value = state.sumExtra;
+      $("s2_final").value = state.final;
+
+      $("finalAns").value = state.final;
+
+      resetFieldStyles();
+      fieldIds.forEach(id=> $(id).classList.add("okField"));
+
+      $("fb").innerHTML =
+        `<strong>All shown:</strong> extras ${state.extraA} and ${state.extraB}, sum ${state.sumExtra}, final ${state.final}.`;
+      setStatus(false, "All answers shown");
+      nextIndex = revealPlan.length;
+      if(sessionStorage.getItem("UFCO-audio-unlocked")==="1") sfxClock();
+    }
+
+    function revealNext(){
+      if(nextIndex >= revealPlan.length){
+        setStatus(true, "All steps shown");
+        $("fb").innerHTML = "<strong>All shown.</strong> Press Clear to try again, or New for a new question.";
+        if(sessionStorage.getItem("UFCO-audio-unlocked")==="1") sfxClock();
+        return;
+      }
+      const step = revealPlan[nextIndex];
+      const el = $(step.id);
+      el.value = String(step.val());
+      el.classList.remove("badField");
+      el.classList.add("okField");
+      $("fb").innerHTML = `<strong>Next:</strong> ${step.msg()}`;
+      setStatus(false, `Showing ${nextIndex+1}/${revealPlan.length}`);
+      nextIndex++;
+      if(sessionStorage.getItem("UFCO-audio-unlocked")==="1") sfxClock();
+    }
+
+    function setProblem(A,B){
+      state.A = A;
+      state.B = B;
+      state.extraA = 100 - A;
+      state.extraB = 100 - B;
+      state.sumExtra = state.extraA + state.extraB;
+      state.final = 200 - state.sumExtra;
+
+      updateTexts();
+      clearBlanks();
+      setStatus(false, "Not checked");
+      $("fb").innerHTML = "<strong>Goal:</strong> Fill the blue boxes. Extras are the numbers you add to reach 100.";
+    }
+
+    function randInt(min,max){ return Math.floor(Math.random()*(max-min+1))+min; }
+    function newQuestion(){
+      const A = randInt(95, 99);
+      let B = randInt(95, 99);
+      if(B === A) B = (B === 99 ? 98 : B+1);
+      setProblem(A,B);
+    }
+
+    function checkAll(){
+      resetFieldStyles();
+
+      const extraA = clampInt($("extraA").value);
+      const extraB = clampInt($("extraB").value);
+
+      const w_extraA = clampInt($("w_extraA").value);
+      const w_extraB = clampInt($("w_extraB").value);
+      const w_sumExtra = clampInt($("w_sumExtra").value);
+      const w_final = clampInt($("w_final").value);
+
+      const s1_addA = clampInt($("s1_addA").value);
+      const s1_addB = clampInt($("s1_addB").value);
+
+      const s2_add1 = clampInt($("s2_add1").value);
+      const s2_add2 = clampInt($("s2_add2").value);
+      const s2_sum  = clampInt($("s2_sum").value);
+
+      const s2_minus = clampInt($("s2_minus").value);
+      const s2_final = clampInt($("s2_final").value);
+
+      const finalAns = clampInt($("finalAns").value);
+
+      let okCount = 0;
+      const total = fieldIds.length;
+
+      okCount += mark("extraA", extraA === state.extraA);
+      okCount += mark("extraB", extraB === state.extraB);
+
+      okCount += mark("w_extraA", w_extraA === state.extraA);
+      okCount += mark("w_extraB", w_extraB === state.extraB);
+      okCount += mark("w_sumExtra", w_sumExtra === state.sumExtra);
+
+      okCount += mark("s1_addA", s1_addA === state.extraA);
+      okCount += mark("s1_addB", s1_addB === state.extraB);
+
+      // ✅ allow commutative for the “extra + extra” row
+      const addPairOK =
+        (s2_add1 === state.extraA && s2_add2 === state.extraB) ||
+        (s2_add1 === state.extraB && s2_add2 === state.extraA);
+
+      if(addPairOK){
+        okCount += mark("s2_add1", true);
+        okCount += mark("s2_add2", true);
+      }else{
+        okCount += mark("s2_add1", s2_add1 === state.extraA);
+        okCount += mark("s2_add2", s2_add2 === state.extraB);
+      }
+
+      okCount += mark("s2_sum", s2_sum === state.sumExtra);
+      okCount += mark("s2_minus", s2_minus === state.sumExtra);
+
+      // ✅ final answers (all must match)
+      okCount += mark("s2_final", s2_final === state.final);
+      okCount += mark("w_final", w_final === state.final);
+      okCount += mark("finalAns", finalAns === state.final);
+
+      if(okCount === total){
+        setStatus(true, "✅ All correct!");
+        $("fb").innerHTML = "<strong>Correct!</strong> Add more to 100, then subtract the extra. 🎉";
+        if(sessionStorage.getItem("UFCO-audio-unlocked")==="1") sfxCorrect();
+        showConfetti();
+        setScore(1, "Success");
+      }else{
+        setStatus(false, `Try again (${okCount}/${total} correct)`);
+        $("fb").innerHTML = `<strong>Keep going.</strong> Extras: (100−${state.A}) and (100−${state.B}). Then 200 − (sum of extras).`;
+        if(sessionStorage.getItem("UFCO-audio-unlocked")==="1") sfxWrong();
+        setScore(0, "Well done!");
+      }
+    }
+
+    window.addEventListener("DOMContentLoaded", ()=>{
+      lockScroll();
+
+      // ✅ Sound by default (resume on first interaction)
+      sessionStorage.setItem("UFCO-audio-unlocked","1");
+      (function(){
+        let armed = false;
+        const arm = () => {
+          if(armed) return;
+          armed = true;
+          try{
+            const ctx = ensureAudio();
+            ctx.resume && ctx.resume().catch(()=>{});
+          }catch(e){}
+        };
+        window.addEventListener("pointerdown", arm, { once:true, capture:true });
+        window.addEventListener("keydown", arm, { once:true, capture:true });
+      })();
+
+      $("btnCheck").addEventListener("click", checkAll);
+      $("btnNext").addEventListener("click", revealNext);
+      $("btnClear").addEventListener("click", clearBlanks);
+      $("btnShowAll").addEventListener("click", showAllAnswers);
+      $("btnNew").addEventListener("click", newQuestion);
+
+      fieldIds.forEach(id=>{
+        $(id).addEventListener("keydown", (e)=>{
+          if(e.key==="Enter"){ e.preventDefault(); checkAll(); }
+        });
+      });
+
+      scaleStage();
+      setProblem(98,96);
+    });
+  </script>
+</body>
+</html>
