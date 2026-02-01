@@ -457,6 +457,27 @@
     #panel.smallMode .bondBox{ height:185px; }
 
     #xapiBase{ display:none!important; }
+
+    /* ✅ Back to Main Menu button that NEVER blocks anything:
+       - pointer-events none on wrapper, pointer-events auto on button
+       - placed bottom-centre
+       - safe-area aware
+    */
+    .homeDock{
+      position:fixed;
+      left:50%;
+      bottom:max(12px, env(safe-area-inset-bottom));
+      transform:translateX(-50%);
+      z-index: 10000;
+      pointer-events:none; /* so it won't block taps/clicks behind it */
+    }
+    #btnHome{
+      pointer-events:auto; /* button remains clickable */
+      border-radius:999px;
+      padding:10px 14px;
+      font-size:12px;
+      box-shadow:0 10px 18px rgba(2,6,23,.08);
+    }
   </style>
 </head>
 
@@ -721,11 +742,10 @@
     </div>
   </div>
 
-  <!-- ✅ Back to Main Menu (bottom centre) -->
-  <button class="ghost" id="btnHome" type="button"
-    style="position:fixed;left:50%;bottom:14px;transform:translateX(-50%);z-index:10000;border-radius:999px;padding:10px 14px;font-size:12px;">
-    ⬅ Back to Main Menu
-  </button>
+  <!-- ✅ Back to Main Menu (bottom centre, non-blocking) -->
+  <div class="homeDock" aria-hidden="false">
+    <button class="ghost" id="btnHome" type="button">⬅ Back to Main Menu</button>
+  </div>
 
   <!-- Sound kit (generic) -->
   <script>
@@ -1055,7 +1075,7 @@
       $("btnShowAll").addEventListener("click", showAllAnswers);
       $("btnNew").addEventListener("click", newQuestion);
 
-      // ✅ Back to Main Menu (bottom centre)
+      // ✅ Back to Main Menu (non-blocking dock)
       $("btnHome").addEventListener("click", ()=>{
         window.location.href = "https://limkimsze-maker.github.io/P3_Mental_Sum_Challenge/";
       });
