@@ -843,6 +843,9 @@
     let nextIndex = 0;
 
     function lockScroll(){
+      // MOBILE_SCROLL_UNLOCK_V2: lessons reflow on phones, so pupils must be able to scroll.
+      const viewWidth = window.visualViewport ? window.visualViewport.width : window.innerWidth;
+      if(viewWidth <= 700) return;
       try{
         document.addEventListener("wheel", (e)=>{ e.preventDefault(); }, {passive:false});
         document.addEventListener("touchmove", (e)=>{
