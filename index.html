@@ -787,6 +787,23 @@
     <button class="ghost" id="btnHome" type="button">⬅ Back to Main Menu</button>
   </div>
 
+
+  <!-- STUDIO_RETURN_LINK_V1 -->
+  <script>
+  (function(){
+    try{
+      if(new URLSearchParams(location.search).get('studio')==='1'){
+        const back=document.querySelector('.mainMenuBtn');
+        if(back){
+          back.href='https://limkimsze-maker.github.io/Primary-Math-Studio/?engine=mental-sum';
+          back.textContent='← Back to Mental sum';
+          back.setAttribute('aria-label','Back to Mental sum in Primary Maths Studio');
+        }
+      }
+    }catch(e){}
+  })();
+  <\/script>
+
   <!-- Sound kit (generic) -->
   <script>
     let audioCtx = null;
